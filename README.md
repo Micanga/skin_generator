@@ -42,3 +42,9 @@ The main goals of this project can be presented as follow:
 4. Process it and provide the correct result image to upload at the game.
 
 ## Examples
+
+## Aknowledgment and Sources
+
+We thank [Anish](https://github.com/anish9) for making the image segmentation code publicly available to the community. Source: https://github.com/anish9/Fashion-AI-segmentation
+
+Pre-Trained model: https://drive.google.com/open?id=14vTYmsHjUYv3VPo1Byrecs3NQuvJo89t
