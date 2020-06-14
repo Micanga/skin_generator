@@ -68,4 +68,12 @@ image_ = api.get_dress(False)
 print("########################################")
 print(api.development())
 print("########################################")
-cv2.imwrite("out.png",image_)
+
+import re
+m = re.search('/(.+?)\.', f)
+if m:
+    processing_id = m.group(1)
+else:
+    print('IdError: processing id extraction error.\nNot found in',image,'.') 
+    exit(1)
+cv2.imwrite("0-"+processing_id+"-out.png",image_)
