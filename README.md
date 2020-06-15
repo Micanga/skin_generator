@@ -43,6 +43,10 @@ The main goals of this project can be presented as follow:
 
 ## Examples
 
+## Reports
+
+[Partial Report :page_facing_up:](PartialReport.pdf) 
+
 ## Aknowledgment and Sources
 
 We thank [Anish](https://github.com/anish9) for making the image segmentation code publicly available to the community. 
