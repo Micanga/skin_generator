@@ -10,7 +10,7 @@ import sys
 
 # 1. Segmentation
 image = sys.argv[1]
-os.system("python3 Fashion-AI-segmentation/run.py "+image)
+#os.system("python3 Fashion-AI-segmentation/run.py "+image)
 
 m = re.search('/(.+?)\.', image)
 if m:
