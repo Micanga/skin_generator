@@ -76,4 +76,4 @@ if m:
 else:
     print('IdError: processing id extraction error.\nNot found in',image,'.') 
     exit(1)
-cv2.imwrite("0-"+processing_id+"-out.png",image_)
+cv2.imwrite("results/1-"+processing_id+"-seg.png",image_)
