@@ -5,17 +5,36 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import re
+from sklearn.cluster import MiniBatchKMeans
 
 class ImageProcessor:
 
 	def __init__(self,filename):
 		self.image_id = self.get_id(filename)
-		self.resolutions = {'AnimalCrossing':64}
+		self.resolutions = {'AnimalCrossing':{
+								'Tank Top':{
+									'front':(32,32),
+									'back':(32,32)},
+								'T-Shirt':{
+									'front':(32,32),
+									'back':(32,32),
+									'left':(22,13),
+									'right':(22,13)},
+								'Long-Sleeve':{
+									'front':(32,32),
+									'back':(32,32),
+									'left':(22,22),
+									'right':(22,22)}
+								}
+							}
+		self.cloth_type = None
+		self.side = None
 
 	def get_id(self,filename):
 		m = re.search('/(.+?)\.', filename)
 		if m:
 			image_id = m.group(1)
+			print('Image id:',image_id)
 			return image_id
 		else:
 			print('IDError: id match find error.\nPattern not found in',filename,'.') 
@@ -133,72 +152,37 @@ class ImageProcessor:
 
 		cv2.imwrite("results/5-"+self.image_id+"-nopersp.png", result)
 
-	def cut_n_resize(self):
-		print('- Cutting')
+	def filter(self):
 		image = Image.open("results/5-"+self.image_id+"-nopersp.png")
 		img = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
-		print('Original Dimensions : ',img.shape)
+		median = cv2.medianBlur(img,5)
+		blur = cv2.bilateralFilter(median, 15, 75, 75) 
+		cv2.imwrite("results/6-"+self.image_id+"-filtered.png", blur)
 
-		width, height = img.shape[0], img.shape[1]
+	def resize(self):
+		image = Image.open("results/6-"+self.image_id+"-filtered.png")
+		img = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
 
-		x_min,x_max,y_min,y_max = 0,0,0,0
-		break_flag = False
-		for x in range(width):
-			for y in range(height):
-				if img[x,y,0] != 255 or img[x,y,1] != 255\
-				or img[x,y,2] != 255:
-					x_min = x
-					break_flag = True
-					break
-			if break_flag:
-				break
-
-		break_flag = False
-		for x in reversed(range(width)):
-			for y in reversed(range(height)):
-				if img[x,y,0] != 255 or img[x,y,1] != 255\
-				or img[x,y,2] != 255:
-					x_max = x
-					break_flag = True
-					break
-			if break_flag:
-				break
-
-		break_flag = False
-		for y in range(height):
-			for x in range(width):
-				if img[x,y,0] != 255 or img[x,y,1] != 255\
-				or img[x,y,2] != 255:
-					y_min = y
-					break_flag = True
-					break
-			if break_flag:
-				break
-
-		break_flag = False
-		for y in reversed(range(height)):
-			for x in reversed(range(width)):
-				if img[x,y,0] != 255 or img[x,y,1] != 255\
-				or img[x,y,2] != 255:
-					y_max = y
-					break_flag = True
-					break
-			if break_flag:
-				break
-
-		print(x_min,x_max,y_min,y_max)
-
-		crop_img = img[x_min:x_max, y_min:y_max	]
-
-
-		print('Cropped Dimensions : ',crop_img.shape)
-		print('- Resizing')
-		print('Original Dimensions : ',crop_img.shape)
-
-		width = int(self.resolutions["AnimalCrossing"])
-		height = int(self.resolutions["AnimalCrossing"])
+		width = int(self.resolutions["AnimalCrossing"][self.cloth_type][self.side][0])
+		height = int(self.resolutions["AnimalCrossing"][self.cloth_type][self.side][1])
 		dim = (width, height)
-		resized = cv2.resize(crop_img, dim, interpolation = cv2.INTER_AREA)
+		resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
 		print('Resized Dimensions : ',resized.shape)
-		cv2.imwrite("results/6-"+self.image_id+"-resized.png", resized)
+		cv2.imwrite("results/7-"+self.image_id+"-resized.png", resized)
+
+	def color_mapping(self):
+		image = cv2.imread("results/7-"+self.image_id+"-resized.png")
+		(h, w) = image.shape[:2]
+		image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+		image = image.reshape((image.shape[0] * image.shape[1], 3))
+
+		clt = MiniBatchKMeans(n_clusters = 15)
+		labels = clt.fit_predict(image)
+		quant = clt.cluster_centers_.astype("uint8")[labels]
+		# convert from L*a*b* to RGB
+		quant = quant.reshape((h, w, 3))
+		quant = cv2.cvtColor(quant, cv2.COLOR_LAB2BGR)
+
+		cv2.imwrite("results/"+self.image_id+".png", quant)
+

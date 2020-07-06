@@ -1,22 +1,45 @@
+# tkinter Imports
+import tkinter
+from tkinter import *
+
 import os
 import sys
 
-from image_processing import ImageProcessor
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using :0.0')
+    os.environ.__setitem__('DISPLAY', ':0.0')
 
-# 1. Segmentation
-image = sys.argv[1]
-#os.system("python3 Fashion-AI-segmentation/run.py "+image)
+# Main
+if __name__ == "__main__":
+	# 1. Starting root
+	root = tkinter.Tk()
 
-# 2. Pre-processing the Fashion-AI output
-processor = ImageProcessor(image)
-processor.prep_run()
+	# 2. Setting the commom features
+	# a. window settings
+	root.title('Skin Generator')
+	root.resizable(width = False,height = False)
+	root.configure(background='white')
+	#root.iconbitmap('@logo.xmb')
 
-# 3. Removing the perspective
-processor.remove_perspective()
+	# b. setting full
+	sw, sh = 800, 800
+	wc, hc = 0, 0
+	pad = 0
 
-# 4. Cutting and resizing the image
-processor.cut_n_resize()
+	root.geometry('%dx%d+%d+%d' % (sw-pad,sh-pad,wc,hc))
+	root.focus_set()  # <-- move focus to this widget
+	root.bind("<Escape>", lambda e: root.quit())
 
-# 5. Filtering the image
+	# c. grid settings
+	root.grid_rowconfigure(0,pad=0)
+	root.grid_columnconfigure(0,pad=0)
+	root.grid_rowconfigure(1,pad=0)
+	root.grid_columnconfigure(1,pad=0)
+	main_bg = None
 
-# 6. Aplaying the model over the image
+	# 4. Starting app
+	from Start import Start
+	Start(root,None,None)
+	root.mainloop()
+
+	# 5. That's all folks :) ... 
