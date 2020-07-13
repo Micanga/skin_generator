@@ -41,11 +41,11 @@ The main goals of this project can be presented as follow:
 3. Transform the real image into the pixel-art module, and;
 4. Process it and provide the correct result image to upload at the game.
 
-## Examples
-
 ## Reports
 
 [Partial Report :page_facing_up:](PartialReport.pdf) 
+
+[Final Report :page_facing_up:](FinalReport.pdf) 
 
 ## Aknowledgment and Sources
 
