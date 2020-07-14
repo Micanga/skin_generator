@@ -47,6 +47,10 @@ The main goals of this project can be presented as follow:
 
 [Final Report :page_facing_up:](FinalReport.pdf) 
 
+## Videos
+
+[Presentation:](https://youtu.be/pYMavTg-h4A) https://youtu.be/pYMavTg-h4A
+
 ## Aknowledgment and Sources
 
 We thank [Anish](https://github.com/anish9) for making the image segmentation code publicly available to the community. 
